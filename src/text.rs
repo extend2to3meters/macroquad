@@ -95,11 +95,11 @@ impl Font {
 
         let (metrics, bitmap) = self.font.rasterize(character, size as f32);
 
-        if metrics.advance_height != 0.0 {
-            // panic!("Vertical fonts are not supported");
-            println!("skipped glyph char caching: {character}");
-            return false;
-        }
+        // if metrics.advance_height != 0.0 {
+        //     // panic!("Vertical fonts are not supported");
+        //     println!("skipped glyph char caching: {character}");
+        //     return false;
+        // }
 
         let (width, height) = (metrics.width as u16, metrics.height as u16);
 
