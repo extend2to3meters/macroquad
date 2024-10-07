@@ -332,7 +332,9 @@ pub fn draw_text_ex(text: &str, x: f32, y: f32, params: TextParams) -> TextDimen
 
     for character in text.chars() {
         if !font.contains(character, font_size) {
-            font.cache_glyph(character, font_size);
+            if !font.cache_glyph(character, font_size) {
+                continue;
+            }
         }
 
         let char_data = &font.characters.lock().unwrap()[&(character, font_size)];
