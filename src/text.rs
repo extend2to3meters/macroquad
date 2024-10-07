@@ -88,9 +88,9 @@ impl Font {
             .descent
     }
 
-    pub(crate) fn cache_glyph(&self, character: char, size: u16) {
+    pub(crate) fn cache_glyph(&self, character: char, size: u16) -> bool {
         if self.contains(character, size) {
-            return;
+            return true;
         }
 
         let (metrics, bitmap) = self.font.rasterize(character, size as f32);
@@ -98,7 +98,7 @@ impl Font {
         if metrics.advance_height != 0.0 {
             // panic!("Vertical fonts are not supported");
             println!("skipped glyph char caching: {character}");
-            return;
+            return false;
         }
 
         let (width, height) = (metrics.width as u16, metrics.height as u16);
@@ -130,6 +130,7 @@ impl Font {
             .lock()
             .unwrap()
             .insert((character, size), character_info);
+        true
     }
 
     pub(crate) fn get(&self, character: char, size: u16) -> Option<CharacterInfo> {
@@ -163,7 +164,9 @@ impl Font {
 
         for character in text.chars() {
             if !self.contains(character, font_size) {
-                self.cache_glyph(character, font_size);
+                if !self.cache_glyph(character, font_size) {
+                    continue;
+                }
             }
 
             let font_data = &self.characters.lock().unwrap()[&(character, font_size)];
